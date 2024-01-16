@@ -22,7 +22,6 @@ namespace all_tests
 		{
 			std::stringstream ss("14 -78 22");
 			std::vector<int> v;
-			// TODO: read values from input stream into vector
 			std::istream_iterator<int> is(ss), end;
 			copy(is, end, back_inserter(v));
 			Assert::AreEqual(3ull, v.size());
@@ -34,7 +33,6 @@ namespace all_tests
 		TEST_METHOD(test_02a)
 		{
 			std::vector<int> v(10);
-			// TODO: fill vector with incremental values
 			iota(v.begin(), v.end(), 1);
 			Assert::AreEqual(10ull, v.size());
 			Assert::IsTrue(std::is_sorted(v.cbegin(), v.cend()));
@@ -46,7 +44,6 @@ namespace all_tests
 			// generate
 			int n = -1;
 			std::vector<int> v(10);
-			// TODO: fill vector with incremental values (by 2)
 			generate(v.begin(), v.end(), [&n]() { return  n += 2; });
 			Assert::IsTrue(std::is_sorted(v.cbegin(), v.cend()));
 			Assert::IsTrue(v.cend() == std::adjacent_find(v.cbegin(), v.cend(), [](int a, int b) { return b - a != 2;  }));
@@ -57,7 +54,6 @@ namespace all_tests
 		TEST_METHOD(test_03a)
 		{
 			std::vector<int> v = { 1, 5, 10 };
-			// TODO: change all values in a vector
 			transform(v.begin(), v.end(), v.begin(), [](int& n) {return n * n * n; });
 			Assert::AreEqual(3ull, v.size());
 			Assert::AreEqual(1, v[0]);
@@ -70,7 +66,6 @@ namespace all_tests
 			std::vector<int> y = { 4, 12, 10 };
 			std::vector<double> d;
 			transform(begin(y), end(y), begin(x), back_inserter(d), [](int x, int y) {return sqrt(x * x + y * y); });
-			// TODO: calculate distances from origin (from x and y collections) to new vector
 			Assert::AreEqual(3ull, d.size());
 			Assert::AreEqual(5., d[0]);
 			Assert::AreEqual(13., d[1]);
@@ -81,14 +76,12 @@ namespace all_tests
 			std::stringstream ss("1.5 2.5 3.5");
 			std::istream_iterator<double> is(ss), end;
 			auto res = accumulate(is, end, 0.);
-				// TODO: sum of all values in input stream
 			Assert::AreEqual(7.5, res);
 		}
 		TEST_METHOD(test_04b)
 		{
 			std::vector<std::string> v{ "V", "S", "I", "T", "E", "!" };
 			auto res = accumulate(v.begin(), v.end(),std::string("GO "));
-				// TODO: concatenated string with additional prefix 
 			Assert::AreEqual("GO VSITE!", res.c_str());
 		}
 		TEST_METHOD(test_04c)
@@ -96,7 +89,6 @@ namespace all_tests
 			struct person { std::string name; int age; };
 			std::vector<person> v{ {"Pero", 33}, {"Iva", 25} };
 			auto total_age = accumulate(v.begin(), v.end(), 0, []( int godine, const person& p) {return godine + p.age; });
-				// TODO: sum of all ages
 			Assert::AreEqual(58, total_age);
 		}
 
@@ -109,7 +101,7 @@ namespace all_tests
 		TEST_METHOD(test_05b)
 		{
 			std::vector<double> v{ 1.5, 8, -11.23, 0, 1e10, 1e10, 1e10, 0, 99 };
-			auto number_of_invalid = count_if(v.begin(), v.end(), [](double n) { return n == 1e10; });
+			auto number_of_invalid = count(v.begin(), v.end(),1e10);
 			Assert::AreEqual(3ll, number_of_invalid);
 		}
 		TEST_METHOD(test_05c)
@@ -186,7 +178,6 @@ namespace all_tests
 				}
 			};
 			sort(v.begin(), v.end(), cmp());
-			// TODO: sort vector by grade, then by points
 			Assert::AreEqual("Iva", v[0].name.c_str());
 			Assert::AreEqual("Marko", v[1].name.c_str());
 			Assert::AreEqual("Pero", v[2].name.c_str());
@@ -195,9 +186,7 @@ namespace all_tests
 		TEST_METHOD(test_10)
 		{
 			std::vector<double> v(2e7);
-			// half of the values less than 1000
 			std::generate(v.begin(), v.begin() + v.size() / 2, []() { return rand() % 1000; });
-			// other half of the values greater than 1000
 			std::generate(v.begin() + v.size() / 2, v.end(), []() { return 1001 + rand() % 1000; });
 			v.push_back(1000); // to be median
 
@@ -207,7 +196,7 @@ namespace all_tests
 			
 
 			std::nth_element(v.begin(), v.begin() + v.size() / 2, v.end());
-			Assert::AreEqual(1000., v[v.size() / 2]); // median value
+			Assert::AreEqual(1000., v[v.size() / 2]);
 		}
 		TEST_METHOD(test_11)
 		{
@@ -222,13 +211,10 @@ namespace all_tests
 		TEST_METHOD(test_12)
 		{
 			std::vector<int> atp_points{ 8445, 7480, 6220, 5300, 5285 };
-
-			// the most interesting match is the one with the smallest difference
-			sort(atp_points.begin(), atp_points.end());
 			std::vector<int> v(atp_points.size());
+			sort(atp_points.begin(), atp_points.end());
 			std::adjacent_difference(atp_points.begin(), atp_points.end(), v.begin());
-			std::transform(v.begin(), v.end(), v.begin(), [](int n) {return abs(n); });
-			auto smallest_difference = (*std::min_element(v.begin(), v.end()));
+			auto smallest_difference = (*std::min_element(v.begin()+1, v.end()));
 			Assert::AreEqual(15, smallest_difference);
 		}
 	};
